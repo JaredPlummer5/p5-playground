@@ -1,83 +1,61 @@
-let bubble1;
 
+
+
+
+let bubbles= []
 let bubble2;
-let bubbleArray = []
-
+let bubble1;
+let bubble;
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    for (let i = 0; i < 500; i++){
+
+    let amountOfRed = random(0, 255);
+    let amountOfBlue = random(0, 255);
+    let amountOfGreen = random(0, 255);
+     bubble1 = new Bubble(random(0, 600), random(0, 400),40, 255, 255, 255);
+     bubble2 = new Bubble(random(0, 600), random(0, 400),40, amountOfRed, amountOfBlue, amountOfGreen);
+//    bubbleArray.push(bubble1, bubble2);
+
+    for (let i = 0; i < 140; i++){
         let amountOfRed = random(0, 255);
         let amountOfBlue = random(0, 255);
         let amountOfGreen = random(0,255);
-        bubble1 = new Bubble(windowWidth/2, windowHeight/2, random(10, 20), amountOfRed, amountOfBlue, amountOfGreen);
+        bubble = new Bubble(random(0, windowWidth), random(0, windowHeight),  20, amountOfRed, amountOfBlue, amountOfGreen);
 
-        bubbleArray.push(bubble1);
+        bubbles.push(bubble);
     }
 
- 
+
 }
-
-
-
 
 function draw() {
-    background(0);
 
-    for (let i = 0; i < bubbleArray.length; i++) {
+    background(255);
 
-
-        bubbleArray[i].show()
-        bubbleArray[i].move()
-        let bubbleWasClicked = bubbleArray[i].clicked(mouseX, mouseY);
-        if (bubbleWasClicked) {
-            bubbleArray[i].changeColor();
-        }
-
+   
+ 
+       
+        for (b of bubbles) {
+            {
+                b.show();
+                b.move();
+                let overLapping = false;
+                for (other of bubbles) {
+                    if (b !== other && b.intersects(other)) {
+                        overLapping = true;
+                    
+                    }
+                }
+                if (overLapping) {
+                    b.changeColor(255);
+                
+                } else {
+                    b.changeColor(0);
+                }
+            }
     }
 
-
 }
-
-function mouseDragged() {
-    for (let i = 0; i < bubbleArray.length; i++) {
-        let bubbleWasClicked = bubbleArray[i].clicked(mouseX, mouseY);
-        if (bubbleWasClicked) {
-            bubbleArray.splice(i,1)
-        }
-
-    }
-
-    
-    // let amountOfRed = random(0, 255);
-    // let amountOfBlue = random(0, 255);
-    // let amountOfGreen = random(0, 255);
-    // let newBubble = new Bubble(mouseX, mouseY, random(10, 20), amountOfRed, amountOfBlue, amountOfGreen);
-
-    // bubbleArray.push(newBubble);
-}
-
-
-// function mousePressed() {
-//     for (let i = 0; i < bubbleArray.length; i++) {
-//         let bubbleWasClicked = bubbleArray[i].clicked(mouseX, mouseY);
-//         if (bubbleWasClicked) {
-//             bubbleArray[i].changeColor();
-//         }
-//     }
-// }
-function mouseClicked() {
-
-    for (let i = 0; i < bubbleArray.length; i++) {
-        let bubbleWasClicked = bubbleArray[i].clicked(mouseX, mouseY);
-        if (bubbleWasClicked) {
-            bubbleArray[i].changeColor();
-        }
-    }
-
-
-}
-
-
 
 
 class Bubble {
@@ -96,8 +74,11 @@ class Bubble {
         this.y = this.y + random(-5, 5)
 
     }
-    changeColor() {
-        this.brightness = 255;
+    changeColor(level) {
+        this.brightness = level;
+        this.amountOfRed = level;
+        //this.amountOfBlue = level
+        //this.amountOfGreen = level
     }
     clicked(px, py) {
 
@@ -111,14 +92,23 @@ class Bubble {
         }
 
     }
+    intersects(other) {
 
+        let distance = dist(this.x, this.y, other.x, other.y);
+        if (distance < this.r + other.r) {
+            return true;
+
+        } else {
+            return false;
+        }
+    }
     show() {
-        stroke(255);
-        noStroke();
+        stroke(150);
+        //noStroke();
         let r = this.amountOfRed
         let g = this.amountOfBlue
         let b = this.amountOfGreen
-        fill(this.brightness, b, g);
+        fill(r, b, g);
         ellipse(this.x, this.y, this.r * 2, this.r * 2);
     }
 }
