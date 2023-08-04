@@ -1,26 +1,28 @@
-
-
-
-
 let bubbles= []
 let bubble2;
 let bubble1;
 let bubble;
+let img;
+let imgArray = [];
+
+function preload() {
+    for (let i = 0; i < 7; i++)
+    imgArray[i] = loadImage(`img${i}.png`);
+   
+}
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    let amountOfRed = random(0, 255);
-    let amountOfBlue = random(0, 255);
-    let amountOfGreen = random(0, 255);
-     bubble1 = new Bubble(random(0, 600), random(0, 400),40, 255, 255, 255);
-     bubble2 = new Bubble(random(0, 600), random(0, 400),40, amountOfRed, amountOfBlue, amountOfGreen);
-//    bubbleArray.push(bubble1, bubble2);
+   
 
     for (let i = 0; i < 140; i++){
+        
         let amountOfRed = random(0, 255);
         let amountOfBlue = random(0, 255);
-        let amountOfGreen = random(0,255);
-        bubble = new Bubble(random(0, windowWidth), random(0, windowHeight),  20, amountOfRed, amountOfBlue, amountOfGreen);
+        let amountOfGreen = random(0, 255);
+        let randomImg = random(imgArray);
+        bubble = new Bubble(random(0, windowWidth), random(0, windowHeight),  50, amountOfRed, amountOfBlue, amountOfGreen, randomImg);
 
         bubbles.push(bubble);
     }
@@ -28,38 +30,35 @@ function setup() {
 
 }
 
+function mousePressed ( ) {
+    for (let i = 0; i < bubbles.length; i++) {
+        
+            
+            bubbles[i].clicked(mouseX, mouseY);
+        
+    }
+}
+
 function draw() {
 
     background(255);
 
    
- 
+    
        
         for (b of bubbles) {
             {
                 b.show();
                 b.move();
-                let overLapping = false;
-                for (other of bubbles) {
-                    if (b !== other && b.intersects(other)) {
-                        overLapping = true;
-                    
-                    }
-                }
-                if (overLapping) {
-                    b.changeColor(255);
-                
-                } else {
-                    b.changeColor(0);
-                }
+               
             }
     }
-
+   
 }
 
 
 class Bubble {
-    constructor(xPostition, yPosition, radius, amountOfRed, amountOfBlue, amountOfGreen) {
+    constructor(xPostition, yPosition, radius, amountOfRed, amountOfBlue, amountOfGreen, img) {
 
         this.x = xPostition,
             this.y = yPosition,
@@ -67,7 +66,8 @@ class Bubble {
             this.amountOfRed = amountOfRed,
             this.amountOfBlue = amountOfBlue,
             this.amountOfGreen = amountOfGreen,
-            this.brightness = 0
+           
+            this.img = img
     }
     move() {
         this.x = this.x + random(-5, 5)
@@ -82,14 +82,12 @@ class Bubble {
     }
     clicked(px, py) {
 
-        let distance = dist(px, py, this.x, this.y);
-        if (distance < this.r) {
-            return true;
+        // let distance = dist(px, py, this.x, this.y);
+        if (px > this.x && px < this.x + this.r && py > this.y && py < this.y + this.r) {
+            this.img = random(imgArray);
 
         }
-        else {
-            return false;
-        }
+       
 
     }
     intersects(other) {
@@ -103,12 +101,13 @@ class Bubble {
         }
     }
     show() {
-        stroke(150);
-        //noStroke();
-        let r = this.amountOfRed
-        let g = this.amountOfBlue
-        let b = this.amountOfGreen
-        fill(r, b, g);
-        ellipse(this.x, this.y, this.r * 2, this.r * 2);
+        image(this.img, this.x, this.y, this.r * 2, this.r * 2)
+        // stroke(150);
+        // //noStroke();
+        // let r = this.amountOfRed
+        // let g = this.amountOfBlue
+        // let b = this.amountOfGreen
+        // fill(r, b, g);
+        // ellipse(this.x, this.y, this.r * 2, this.r * 2);
     }
 }
